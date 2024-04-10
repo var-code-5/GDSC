@@ -15,13 +15,35 @@ class section:
         draw_border(self.section_win)
         self.heading_win = curses.newwin(2,28,7,11+(self.sec_len)*section_size)
         self.heading_win.border('|', '|', ' ', '-', ' ', ' ', '+', '+')
-        self.heading = curses.textpad.Textbox(self.heading_win)
-        self.section_win.refresh()
-        self.heading.edit()
-        self.heading_win.refresh()
+        self.add_task_win = curses.newwin(3,section_size,curses.LINES-3,10+(self.sec_len)*section_size)
+        self.add_task_win.addstr(1,0," + Add task")
+        draw_border(self.add_task_win)
+        if(self.sec_len==0):
+            self.heading_win.addstr(0,0,"TODO")
+            self.section_win.refresh()
+            self.heading_win.refresh()
+            self.add_task_win.refresh()
+        elif(self.sec_len==1):
+            self.heading_win.addstr(0,0,"IN PROGRESS")
+            self.section_win.refresh()
+            self.heading_win.refresh()
+            self.add_task_win.refresh()
+        elif(self.sec_len==2):
+            self.heading_win.addstr(0,0,"DONE")
+            self.section_win.refresh()
+            self.heading_win.refresh()
+            self.add_task_win.refresh()
+        else:
+            self.heading = curses.textpad.Textbox(self.heading_win)
+            self.section_win.refresh()
+            self.heading.edit()
+            self.heading_win.refresh()
+            self.add_task_win.refresh()
+
 
 class task:
     pass
+
 
 class kanban:
     def __init__(self,window: 'curses._CursesWindow')->None:
@@ -41,6 +63,7 @@ class kanban:
         #making the board
         self.board1 =curses.newwin(curses.LINES - 6,curses.COLS-20,5,10)      
         #making the default sections
+        self.sect = "TODO"
         sections.append(section())
         sections.append(section())
         sections.append(section())
