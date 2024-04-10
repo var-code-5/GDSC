@@ -4,6 +4,8 @@ import curses.textpad
 
 sections = []
 section_size = 30
+row_size = 4
+
 
 def draw_border(win):
         win.border('|', '|', '-', '-', '+', '+', '+', '+')
@@ -17,6 +19,7 @@ class section:
         self.heading_win.border('|', '|', ' ', '-', ' ', ' ', '+', '+')
         self.add_task_win = curses.newwin(3,section_size,curses.LINES-3,10+(self.sec_len)*section_size)
         self.add_task_win.addstr(1,0," + Add task")
+        self.task_count = 0
         draw_border(self.add_task_win)
         if(self.sec_len==0):
             self.heading_win.addstr(0,0,"TODO")
@@ -42,8 +45,12 @@ class section:
 
 
 class task:
-    pass
-
+    def __init__(self,row:int,column) -> None:
+        self.task_win = curses.newwin(4,section_size-2,10+row*row_size,11+column*section_size)
+        self.task_win.box()
+        sections[column].task_count += 1
+        self.task_win.refresh()
+        pass
 
 class kanban:
     def __init__(self,window: 'curses._CursesWindow')->None:
@@ -74,20 +81,43 @@ def initialize(window):
     window.clear()
     text = "<> GDSC"
     window.addstr(1,(int(curses.COLS/2)-int(len(text)/2)),text)
-    segment_1 = curses.newwin(curses.LINES - 6,30,5,10)
-    segment_1.box()
-    segment_1.addstr(0,0,"+")
-    segment_1.addstr(0,29,"+")
-    segment_1.addstr(curses.LINES-7,0,"+")
-    segment_1.refresh()
+
+
+def add_task(section:int,max_lines)->None:
+    inital_point = 10
+    row = sections[section].task_count
+    if(max_lines-3 > inital_point+row*row_size):
+        task_loc = task(row,section)
+    else:
+        pass 
+
+def mouse_event(x,y,max_lines,max_cols):
+    if x>=10 and x<=40 and y>= max_lines-3 and y<= max_lines:
+        add_task(0,max_lines)
+    elif x>=40 and x<=70 and y>= max_lines-3 and y<= max_lines:
+        add_task(1,max_lines)
+    elif x>=70 and x<=100 and y>= max_lines-3 and y<= max_lines:
+        add_task(2,max_lines)
+    elif x>=100 and x<=130 and y>= max_lines-3 and y<= max_lines and len(sections)>=4:
+        add_task(3,max_lines)
+    elif x>=130 and x<=160 and y>= max_lines-3 and y<= max_lines and len(sections)>=5:
+        add_task(3,max_lines)
+
 
 def c_main(stdscr:'curses._CursesWindow'):
+    curses.mousemask(-1)
     initialize(stdscr)
     boards = []
     boards.append(kanban(stdscr))
     stdscr.refresh()
-    stdscr.getch()
-    return 0
+    while True:
+        c = stdscr.getch()
+        if c == ord('q'):    
+            return 0
+        elif c == curses.KEY_MOUSE:
+            _,x,y,_,bitstate = curses.getmouse()
+            if bitstate & curses.BUTTON1_CLICKED:
+                mouse_event(x,y,curses.LINES,curses.COLS)
 
 def main()->int:
     return curses.wrapper(c_main)
