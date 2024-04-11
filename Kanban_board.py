@@ -74,11 +74,40 @@ class task:
         #del_task
         self.task_win.addstr(0,section_size-3,"x",curses.color_pair(3))
         self.task_win.refresh()
+        # task priority
+        self.task_priority = self.task_win.derwin(1,2,0,section_size-6)
+        self.priority_text = curses.textpad.Textbox(self.task_priority)
+        self.priority_text.edit()
+        self.task_priority.refresh()
+        self.priority = self.priority_text.gather()
+        self.task_priority.clear()
+        if self.priority == 'Hq':
+             self.task_win.addstr(0,section_size-6,"H",curses.color_pair(3))
+        elif self.priority == 'Mq':
+             self.task_win.addstr(0,section_size-6,"M",curses.color_pair(2))
+        elif self.priority == 'Lq':
+             self.task_win.addstr(0,section_size-6,"L",curses.color_pair(1))
+        else:
+             self.task_win.addstr(0,section_size-6,self.priority[0])
+        # assignee and repotee
+        self.task_win.addstr(3,1,"Assigned to: ",curses.color_pair(4))
+        self.task_win.addstr(4,1,"Report to  : ",curses.color_pair(2))
+        self.task_win.refresh()
         # task description
         self.description_win = self.task_win.derwin(2,section_size-4,1,1)
         self.description = curses.textpad.Textbox(self.description_win)
         self.description.edit()
         self.description_win.refresh()
+        self.description_win.refresh()
+        #assigned and reported tasks
+        self.assigned_task_win = self.task_win.derwin(1,section_size-17,3,14)
+        self.assigned_task = curses.textpad.Textbox(self.assigned_task_win)
+        self.assigned_task.edit()
+        self.assigned_task_win.refresh()
+        self.reported_task_win = self.task_win.derwin(1,section_size-17,4,14)
+        self.reported_task = curses.textpad.Textbox(self.reported_task_win)
+        self.reported_task.edit()
+        self.reported_task_win.refresh()
         self.task_win.refresh()
         pass
 
@@ -168,7 +197,8 @@ def c_main(stdscr:'curses._CursesWindow'):
     curses.init_pair(1,curses.COLOR_GREEN,curses.COLOR_BLACK)
     curses.init_pair(2,curses.COLOR_YELLOW ,curses.COLOR_BLACK)
     curses.init_pair(3,curses.COLOR_RED,curses.COLOR_BLACK)
-    curses.init_pair(4,curses.COLOR_WHITE,curses.COLOR_RED)
+    curses.init_pair(4,curses.COLOR_CYAN,curses.COLOR_BLACK)
+    curses.init_pair(5,curses.COLOR_MAGENTA,curses.COLOR_BLACK)
     curses.mousemask(-1)
     initialize(stdscr)
     boards = []
