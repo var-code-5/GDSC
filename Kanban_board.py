@@ -74,7 +74,17 @@ class task:
         #del_task
         self.task_win.addstr(0,section_size-3,"x",curses.color_pair(3))
         self.task_win.refresh()
+        # task description
+        self.description_win = self.task_win.derwin(2,section_size-4,1,1)
+        self.description = curses.textpad.Textbox(self.description_win)
+        self.description.edit()
+        self.description_win.refresh()
+        self.task_win.refresh()
         pass
+
+    def __del__(self):
+        self.task_win.clear()
+        self.task_win.refresh()
 
 class kanban:
     def __init__(self,window: 'curses._CursesWindow')->None:
@@ -114,6 +124,16 @@ def add_task(section:int,max_lines)->None:
     else:
         curses.beep() 
 
+def del_task(section_id,task_id)->None:
+    tasks[section_id].pop(task_id)
+    sections[section_id].task_count -= 1
+    for i in range(task_id,len(tasks[section_id])):
+        y,x = tasks[section_id][i].task_win.getbegyx()
+        blank_win = curses.newwin(task_row_size,section_size-2,y,x)
+        blank_win.refresh()
+        tasks[section_id][i].task_win.mvwin(y-task_row_size,x)
+        tasks[section_id][i].task_win.refresh()
+
 def mouse_event(x,y,max_lines,max_cols):
     # adding the tasks
     if x>=10 and x<=40 and y>= max_lines-3 and y<= max_lines:
@@ -136,6 +156,13 @@ def mouse_event(x,y,max_lines,max_cols):
             curses.beep()
     # removing the tasks
 
+    inital_x = 38
+    inital_y = 10
+    for i in range(len(sections)):
+        for j in range(sections[i].task_count):
+            if x==inital_x+i*section_size and y==inital_y+j*task_row_size:
+                del_task(i,j)
+
 
 def c_main(stdscr:'curses._CursesWindow'):
     curses.init_pair(1,curses.COLOR_GREEN,curses.COLOR_BLACK)
@@ -155,7 +182,7 @@ def c_main(stdscr:'curses._CursesWindow'):
             _,x,y,_,bitstate = curses.getmouse()
             if bitstate & curses.BUTTON1_CLICKED:
                 mouse_event(x,y,curses.LINES,curses.COLS)
-                print(x,y)
+                
 
 def main()->int:
     return curses.wrapper(c_main)
