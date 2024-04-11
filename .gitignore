@@ -1,6 +1,6 @@
 /myenv
 NCURSES-Programming-HOWTO.pdf
-test.py
+#test.py
 test.cpp
 test.py~
 /#test.py#
