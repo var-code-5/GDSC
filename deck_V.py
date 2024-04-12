@@ -33,20 +33,23 @@ def generate_deck():
     for value in card_values:
         for suit in suits:
             if value in face_cards:
-                _card = Card(face_cards[value], suit,value)
+                _card = Card(face_cards[value], suit, value)
             else:
-                _card = Card(value, suit)
+                _card = Card(value, suit, value)
             cards.append(_card)
     return cards
 
 class foundation:
-    cards = 0
-    current_card = 0
+    def __init__(self):
+        self.cards = 0
+        self.current_card = 0
 
 class stock:
-    cards_left = cards_in_stock
-    face_card_ind = 0
+    def __init__(self):
+        self.cards_left = cards_in_stock
+        self.face_card_ind = 0
 
 class pile:
-    cards = []
-    face_card = -1
+    def __init__(self) -> None:
+        self.cards = []
+        self.face_card = -1
