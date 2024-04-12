@@ -195,7 +195,6 @@ def mouse_event(x,y,max_lines,max_cols):
             sections[i].sort_sections()
 
     if y>=6 and y<= 9 and x>=10+(len(sections))*section_size and x<=10+(len(sections))*section_size+4:
-        print("pressed")
         if(10+(len(sections)+1)*section_size+4 < max_cols):
             sections.append(section())
         else:
