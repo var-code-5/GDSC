@@ -1,6 +1,3 @@
-# GDSC Kanband Board
-### this is a submission for the 2024 enrollment for GDSC culb.
-
 # Kanban Board Application
 
 The Kanban Board Application is a command-line tool built using the Python `curses` library. It provides a visual representation of a Kanban board, allowing users to manage tasks and organize their workflow.
@@ -12,7 +9,8 @@ The Kanban Board Application is a command-line tool built using the Python `curs
 - **Task Assignment**: Users can assign tasks to specific individuals and report to others.
 - **Task Description**: Users can add a description for each task.
 - **Sections**: The application provides three default sections: "TODO", "IN PROGRESS", and "DONE". Users can also create additional custom sections.
-- **Mouse Interaction**: The application supports mouse interactions, allowing users to add new tasks and sections by clicking on the designated areas.
+- **Sorting**: Users can sort the tasks within each section based on their priority.
+- **Mouse Interaction**: The application supports mouse interactions, allowing users to add new tasks, sections, and sort the tasks.
 
 ## Usage
 
@@ -20,9 +18,10 @@ The Kanban Board Application is a command-line tool built using the Python `curs
 2. The application will display the Kanban board with the default sections.
 3. To add a new task, click on the "+ Add task" button in the desired section.
 4. Fill in the task details, including priority, assigned to, reported to, and description.
-5. To delete a task, click on the "x" button in the top-right corner of the task window.
+5. To sort the tasks within a section, click on the "^ Sort" button in the desired section.
 6. To create a new section, click on the "+" button in the top-right corner of the board.
-7. To quit the application, press the "q" key.
+7. To delete a task, click on the "x" button in the top-right corner of the task window.
+8. To quit the application, press the "q" key.
 
 ## Code Structure
 
@@ -34,7 +33,7 @@ The application consists of the following main components:
 4. `initialize(window)` function: Initializes the Kanban board and sets up the default sections.
 5. `add_task(section, max_lines)` function: Adds a new task to the specified section.
 6. `del_task(section_id, task_id)` function: Removes a task from the specified section.
-7. `mouse_event(x, y, max_lines, max_cols)` function: Handles mouse interactions, such as adding new tasks and sections.
+7. `mouse_event(x, y, max_lines, max_cols)` function: Handles mouse interactions, such as adding new tasks, sections, and sorting the tasks.
 8. `c_main(stdscr)` function: The main entry point of the application, which sets up the `curses` environment and handles the main loop.
 
 ## Dependencies
