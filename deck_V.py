@@ -8,6 +8,8 @@ max_pile_size = 20
 
 card_values = [1,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13] #for better understanding
 suits = ["clubs", "diamonds", "hearts", "spades"]
+black_suit = ["clubs", "spades"]
+red_suit = ["diamonds", "hearts"]
 
 face_cards = {
     "J": 11,
@@ -44,3 +46,7 @@ class foundation:
 class stock:
     cards_left = cards_in_stock
     face_card_ind = 0
+
+class pile:
+    cards = []
+    face_card = -1
