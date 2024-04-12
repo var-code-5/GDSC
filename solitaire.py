@@ -6,9 +6,14 @@ def main():
     game.display_legal_moves()
     game.display()
     while True:
+        current_score = game.game_score()
+        if current_score == 364:
+            print("Congratulations You have successfully completed the game!!!")
+            break
         inp = input("Your move : ")
         try:
             if inp == '0':
+                print(f'your score : {current_score}')
                 break
             elif inp == '1':
                 game.display_legal_moves()

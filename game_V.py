@@ -164,6 +164,12 @@ class game:
                     print(f'[{self.piles[i].cards[j].value} {self.piles[i].cards[j].suit}]', end=" ")
             print()
 
+    def game_score(self):
+        self.score = 0
+        for i in range(4):
+            self.score += ((self.foundation[i].cards)*(self.foundation[i].cards+1))/2
+        return  self.score
+
     def display_legal_moves(self):
         print("""
               1. Press 0 to exit
