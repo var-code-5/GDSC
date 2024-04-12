@@ -18,18 +18,22 @@ class section:
         draw_border(self.section_win)
         self.heading_win = curses.newwin(2,28,7,11+(self.sec_len)*section_size)
         self.heading_win.border('|', '|', ' ', '-', ' ', ' ', '+', '+')
-        self.add_task_win = curses.newwin(3,section_size,curses.LINES-3,10+(self.sec_len)*section_size)
+        self.add_task_win = curses.newwin(3,int(section_size/2),curses.LINES-3,10+(self.sec_len)*section_size)
+        self.sort_sections_win = curses.newwin(3,int(section_size/2),curses.LINES-3,10+(self.sec_len)*section_size+int(section_size/2))
         self.add_task_win.addstr(1,0," + Add task")
+        self.sort_sections_win.addstr(1,0," ^   Sort ")
         self.task_count = 0
         self.add_section_win = curses.newwin(3,5,6,10+(self.sec_len)*section_size)
         self.add_section_win.addstr(1,2,"+",curses.color_pair(1))
         draw_border(self.add_section_win)
         draw_border(self.add_task_win)
+        draw_border(self.sort_sections_win)
         if(self.sec_len==0):
             self.heading_win.addstr(0,0,"TODO")
             self.section_win.refresh()
             self.heading_win.refresh()
             self.add_task_win.refresh()
+            self.sort_sections_win.refresh()
             self.add_section_win.mvwin(6,10+(self.sec_len+1)*section_size)
             self.add_section_win.refresh()
         elif(self.sec_len==1):
@@ -37,6 +41,7 @@ class section:
             self.section_win.refresh()
             self.heading_win.refresh()
             self.add_task_win.refresh()
+            self.sort_sections_win.refresh()
             self.add_section_win.mvwin(6,10+(self.sec_len+1)*section_size)
             self.add_section_win.refresh()
         elif(self.sec_len==2):
@@ -44,6 +49,7 @@ class section:
             self.section_win.refresh()
             self.heading_win.refresh()
             self.add_task_win.refresh()
+            self.sort_sections_win.refresh()
             self.add_section_win.mvwin(6,10+(self.sec_len+1)*section_size)
             self.add_section_win.refresh()
         else:
@@ -52,8 +58,18 @@ class section:
             self.heading.edit()
             self.heading_win.refresh()
             self.add_task_win.refresh()
+            self.sort_sections_win.refresh()
             self.add_section_win.mvwin(6,10+(self.sec_len+1)*section_size)
             self.add_section_win.refresh()
+
+    def sort_sections(self):
+        for i in range(len(sections)):
+            if sections[i] == self:
+                section = i
+        tasks[section].sort(key=lambda x: x.task_priority_value)
+        for i in range(self.task_count):
+            tasks[section][i].task_win.mvwin(10+i*task_row_size,11+section*section_size)
+            tasks[section][i].task_win.refresh()
 
 
 class task:
@@ -83,12 +99,16 @@ class task:
         self.task_priority.clear()
         if self.priority == 'Hq':
              self.task_win.addstr(0,section_size-6,"H",curses.color_pair(3))
+             self.task_priority_value = 1
         elif self.priority == 'Mq':
              self.task_win.addstr(0,section_size-6,"M",curses.color_pair(2))
+             self.task_priority_value = 2
         elif self.priority == 'Lq':
              self.task_win.addstr(0,section_size-6,"L",curses.color_pair(1))
+             self.task_priority_value = 3
         else:
              self.task_win.addstr(0,section_size-6,self.priority[0])
+             self.task_priority_value = 4
         # assignee and repotee
         self.task_win.addstr(3,1,"Assigned to: ",curses.color_pair(4))
         self.task_win.addstr(4,1,"Report to  : ",curses.color_pair(2))
@@ -165,17 +185,14 @@ def del_task(section_id,task_id)->None:
 
 def mouse_event(x,y,max_lines,max_cols):
     # adding the tasks
-    if x>=10 and x<=40 and y>= max_lines-3 and y<= max_lines:
-        add_task(0,max_lines)
-    elif x>=40 and x<=70 and y>= max_lines-3 and y<= max_lines:
-        add_task(1,max_lines)
-    elif x>=70 and x<=100 and y>= max_lines-3 and y<= max_lines:
-        add_task(2,max_lines)
-    elif x>=100 and x<=130 and y>= max_lines-3 and y<= max_lines and len(sections)>=4:
-        add_task(3,max_lines)
-    elif x>=130 and x<=160 and y>= max_lines-3 and y<= max_lines and len(sections)>=5:
-        add_task(3,max_lines)
+    for i in range(len(sections)):
+        if(x>=10+i*section_size and x<=10+int(section_size/2)+i*section_size) and (y>max_lines-4 and y<= max_lines):
+            add_task(i,max_lines)
 
+    # sorting the sections
+    for i in range(len(sections)):
+        if(x>=10+int(section_size/2)+i*section_size and x<=10+section_size+i*section_size) and (y>max_lines-4 and y<= max_lines):
+            sections[i].sort_sections()
 
     if y>=6 and y<= 9 and x>=10+(len(sections))*section_size and x<=10+(len(sections))*section_size+4:
         print("pressed")
