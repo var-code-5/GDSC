@@ -39,7 +39,7 @@ class game:
             self.deck[0] = self.deck[len(self.deck)-1]
             self.deck.pop(len(self.deck)-1)
             return True
-        elif self.foundation[self.found_ind].current_card.rank == ele.rank-1:
+        elif self.foundation[self.found_ind].cards != 0 and self.foundation[self.found_ind].current_card.rank == ele.rank-1:
             self.foundation[self.found_ind].current_card = ele
             self.foundation[self.found_ind].cards += 1
             self.deck[0] = self.deck[len(self.deck)-1]
@@ -50,19 +50,27 @@ class game:
         
     def move_stack_to_pile(self,index):
         index -= 1
-        if self.pile[index].face_card == -1:
+        if self.piles[index].face_card == -1:
             if(self.deck[0].rank == 11):
                 self.piles[index].cards.append(self.deck[0])
                 self.deck[0] = self.deck[len(self.deck)-1]
                 self.deck.pop(len(self.deck)-1)  
+                return True
             else:
                 return False
         else:
             if(self.deck[0].rank == self.piles[index].cards[-1].rank-1):
+                print("entered")
                 if(self.deck[0].suit in deck_V.black_suit and self.piles[index].cards[-1].suit not in deck_V.black_suit):
                     self.piles[index].cards.append(self.deck[0])
                     self.deck[0] = self.deck[len(self.deck)-1]
                     self.deck.pop(len(self.deck)-1)
+                    return True
+                elif(self.deck[0].suit in deck_V.red_suit and self.piles[index].cards[-1].suit not in deck_V.red_suit):
+                    self.piles[index].cards.append(self.deck[0])
+                    self.deck[0] = self.deck[len(self.deck)-1]
+                    self.deck.pop(len(self.deck)-1)
+                    return True
                 else:
                     return False
             else:
@@ -106,28 +114,28 @@ class game:
 
     def move_pile_to_foundation(self,from_):
         from_ -= 1
-        ele = self.piles[from_][len(self.piles[from_])-1]
+        ele = self.piles[from_].cards[len(self.piles[from_].cards)-1]
         for i in deck_V.suits:
             if i == ele.suit:
                 self.found_ind = deck_V.suits.index(i)
         if(self.piles[from_].face_card != -1):
-            if ele.rank == 0:
+            if ele.rank == 1:
                 self.foundation[self.found_ind].current_card = ele
                 self.foundation[self.found_ind].cards += 1
                 if(from_ == self.piles[from_].face_card):
-                    self.piles[from_].pop()
+                    self.piles[from_].cards.pop()
                     self.piles[from_].face_card -= 1
                 else:
-                    self.piles[from_].pop()
+                    self.piles[from_].cards.pop()
                 return True
             elif self.foundation.current_card.rank == ele.rank-1:
                 self.foundation[self.found_ind].current_card = ele
                 self.foundation[self.found_ind].cards += 1
                 if(from_ == self.piles[from_].face_card):
-                    self.piles[from_].pop()
+                    self.piles[from_].cards.pop()
                     self.piles[from_].face_card -= 1
                 else:
-                    self.piles[from_].pop()
+                    self.piles[from_].cards.pop()
                 return True
             else:
                 return False
@@ -147,8 +155,13 @@ class game:
         print("pile : ")
         for i in range(deck_V.num_piles):
             print(f'Pile {i+1} : ' , end='')
-            for j in range(len(self.piles[i].cards)):
-                print(f'[{self.piles[i].cards[j].value} {self.piles[i].cards[j].suit}]', end=" ")
+            for k in range(self.piles[i].face_card):
+                print("*****" , end=" ")
+            for j in range(self.piles[i].face_card,len(self.piles[i].cards)):
+                if(self.piles[i].cards == []):
+                    pass
+                else:
+                    print(f'[{self.piles[i].cards[j].value} {self.piles[i].cards[j].suit}]', end=" ")
             print()
 
     def display_legal_moves(self):
